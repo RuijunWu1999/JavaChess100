@@ -6,6 +6,8 @@ package chess;
 
 import chess.Board.*;
 import chess.Side.*;
+
+import javax.swing.*;
 import java.awt.Color;
 
 /**
@@ -62,11 +64,35 @@ public class Square
 
     public boolean isUnderAttackFrom(Side attackingSide, boolean pinMatters)
     {
-        return board.isUnderAttack(this, attackingSide, pinMatters);
+        boolean result = board.isUnderAttack(this, attackingSide, pinMatters);
+        /*
+        if (result){
+            JOptionPane.showMessageDialog(null,"This potential Move makes the King under attack!");
+        }
+         */
+        return result;
     }
     
     public boolean isUnderAttackFromNonKingPieces(Side attackingSide, boolean pinMatters)
     {
         return board.isUnderAttackFromNonKingPieces(this, attackingSide, pinMatters);
+    }
+
+    public int getPiecesEnRoute(Square sqTarget) {
+        int piecesEnRoute = 0;
+        int rankInc = (int) Math.signum(sqTarget.rank - this.rank),
+                fileInc = (int) Math.signum(sqTarget.file - this.file);
+        // Direction by signed number to FOR Loop.
+        for (int rank = this.rank + rankInc, file = this.file + fileInc;
+             Math.abs(rank - sqTarget.rank) > 0 || Math.abs(file - sqTarget.file) > 0;
+             rank += rankInc, file += fileInc)
+        {
+            if (board.get(rank, file).piece != null)
+            {
+                piecesEnRoute ++;
+                // Tranditional Rook, Any Piece should not able to move over to an unoccupied Square.
+            }
+        }
+        return piecesEnRoute;
     }
 }

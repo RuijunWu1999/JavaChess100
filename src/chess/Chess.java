@@ -4,10 +4,6 @@
  */
 package chess;
 
-import chess.Board.*;
-import chess.Side.*;
-import chess.Square.*;
-
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -53,11 +49,19 @@ public class Chess
             }
         });
 
-        final JRadioButton btn3_XL_TR = new JRadioButton("Enlarged Chess + Chinese Trebuchet");
+        final JRadioButton btn3_XL_TR = new JRadioButton("Enlarged Chess + Chinese Cannons(4 directions)");
         btn3_XL_TR.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                layoutSelected[0] = Game.XL_PLUS_CHINESE_TREBUCHET;
+                layoutSelected[0] = Game.XL_PLUS_CANNON;
+            }
+        });
+
+        final JRadioButton btn4_XL_TR_8 = new JRadioButton("Enlarged Chess + Chinese Cannons(8 directions)");
+        btn4_XL_TR_8.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                layoutSelected[0] = Game.XL_PLUS_CANNON;
             }
         });
 
@@ -75,13 +79,15 @@ public class Chess
         btnGrp.add(btn1_Classic);
         btnGrp.add(btn2_XL);
         btnGrp.add(btn3_XL_TR);
+        btnGrp.add(btn4_XL_TR_8);
 
         btn3_XL_TR.setSelected(true);
-        layoutSelected[0] = Game.XL_PLUS_CHINESE_TREBUCHET;
+        layoutSelected[0] = Game.XL_PLUS_CANNON;
 
         panel.add(btn1_Classic);
         panel.add(btn2_XL);
         panel.add(btn3_XL_TR);
+        panel.add(btn4_XL_TR_8);
         panel.add(btn_START);
 
         jf.setContentPane(panel);

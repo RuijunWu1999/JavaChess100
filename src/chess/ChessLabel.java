@@ -9,8 +9,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import javax.swing.JButton;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 
 public class ChessLabel extends JButton //implements MouseListener
 {
@@ -96,6 +95,8 @@ public class ChessLabel extends JButton //implements MouseListener
         {
             board.discardMove();
             System.out.println("hey");
+            JOptionPane.showMessageDialog(this, "Invalid Move!");
+            // LOOKS not functioned.
         }
     }
     

@@ -26,7 +26,7 @@ public class Game
 {
     final public static int STD_LAYOUT = 1;
     final public static int XL_LAYOUT = 10;
-    final public static int XL_PLUS_CHINESE_TREBUCHET = 20;
+    final public static int XL_PLUS_CANNON = 20;
     public static final ImageIcon BATTLING_ICON = new ImageIcon("img/Battling.gif");
     // CONSTANTS
 
@@ -51,14 +51,39 @@ public class Game
     {
         board = new Board(this);
         // 只生成大棋盘 8 X 8 或 10 X 10
-        White = new Side(true, this);
-        // 生成并配置白方棋子
-        Black = new Side(false, this);
-        // 生成并配置黑方棋子
+        switch (LayoutType){
+            case Game.STD_LAYOUT: {
+                White = new Side(true, this);
+                // 生成并配置白方棋子
+                Black = new Side(false, this);
+                // 生成并配置黑方棋子
+                break;
+            }
+            case Game.XL_LAYOUT : {
+                White = new Side_XL(true, this);
+                // 生成并配置白方棋子
+                Black = new Side_XL(false, this);
+                // 生成并配置黑方棋子
+                break;
+            }
+            case Game.XL_PLUS_CANNON : {
+                White = new Side_XL_Cannons(true, this);
+                // 生成并配置白方棋子
+                Black = new Side_XL_Cannons(false, this);
+                // 生成并配置黑方棋子
+                break;
+            }
+            default : {
+                White = new Side(true, this);
+                // 生成并配置白方棋子
+                Black = new Side(false, this);
+                // 生成并配置黑方棋子
+            }
+        }
         White.opponent = Black;
         Black.opponent = White;
         moveList = new MoveList();
-        gameStatus = new GameStatus();
+        gameStatus = new GameStatus(this);
         // 生成新的状态记录
         gameStatus.readyForMove = true;
     }
@@ -110,16 +135,13 @@ public class Game
 
     private void makeMove(Move move)
     {
-        System.out.println("moving...");
+        System.out.println("moving...".concat(move.toString()));
 
         if (move.targetSquare.piece != null && move.targetSquare.piece.getClass().equals(King.class))
         {
             // KING is captured !!!
             Side winningSide = move.targetSquare.piece.getSide().opponent;
-            String winningMsg = (winningSide.isWhite ? "WHITE" : "BLACK ");
-            new JOptionPane().showMessageDialog(null, winningMsg.concat(" WIN !"), "", JOptionPane.WARNING_MESSAGE);
-            gameStatus.readyForMove = false;
-            board.removeAll();
+            winAndStop(winningSide);
             return;
             // Try return to stop app running.
             // Looks it worked.
@@ -132,6 +154,17 @@ public class Game
 
         gameStatus.sideToMove.makeMove(move);
         moveList.addMove(move);
+    }
+
+    private void winAndStop(Side winningSide) {
+        String winningMsg = (winningSide.isWhite ? "WHITE" : "BLACK ").concat(" WIN !");
+        new JOptionPane().showMessageDialog(null, winningMsg, "", JOptionPane.WARNING_MESSAGE);
+        gameStatus.readyForMove = false;
+        // HOW TO skip NExt chained returns!!!???
+        board.removeAll();
+        // KEEP the board display but no more movement.
+        throw new RuntimeException(winningMsg);
+        // STOPPED ALL !!!
     }
 
     private boolean gameActive()
@@ -150,6 +183,7 @@ public class Game
 
     private class GameStatus
     {
+        Game game;
         boolean gameActive;
         boolean readyForMove;
         Side sideToMove;
@@ -157,8 +191,9 @@ public class Game
         int enPassantFile;
         List<Piece> capturedPieces;
 
-        public GameStatus()
+        public GameStatus(Game g)
         {
+            game = g;
             sideToMove = White;
             gameActive = true;
             enPassantActive = false;
@@ -180,22 +215,14 @@ public class Game
             if (!gameActive)
             {
                 System.out.println("Checkmate! " + ((sideToMove.opponent.isWhite) ? "White wins!":"Black wins!"));
+                winAndStop(gameStatus.sideToMove.opponent);
                 return;
             }
-            if (sideToMove.inCheck){
+            if (sideToMove.inCheck && (board.getComponentCount() > 0) ){
+                // (board.getComponentCount() > 0) is used to avoid "CHECK!" appeared again when WIN of on side.
                 System.out.println("Check!");
 
-                new JOptionPane().showMessageDialog(null, "Check!", "", JOptionPane.WARNING_MESSAGE);
-                //java.util.Timer delayer = new java.util.Timer();
-                /*
-                delayer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        chk.dispose();
-                    }
-                },1500);
-                 */
-                // After 1500ms change icon back to default.
+                new JOptionPane().showMessageDialog(null, "Check!", "Check!", JOptionPane.WARNING_MESSAGE);
             }
 
             updateEnPassantStatus();
@@ -233,7 +260,7 @@ public class Game
                 for (Piece p : pieceList)
                 {
                     showBattle(p.square);
-                    // Add a progress .
+                    // Show a progress .
                     p.square = null;
                     getPieceList(p).remove(p);
                 }
@@ -245,6 +272,9 @@ public class Game
             // Try Show a battle progress.
             final ChessLabel tt = sqBattling.icon;
             Icon bb = tt.getIcon();
+            if (bb == BATTLING_ICON) {
+                return;
+            }
             tt.setIcon(BATTLING_ICON);
             tt.setContentAreaFilled(true);
             tt.repaint();
@@ -260,6 +290,7 @@ public class Game
 
         private List<? extends Piece> getPieceList(Piece p)
         {
+            // already加入炮的LIST
             if (p.getClass().equals(Pawn.class))
                 return p.getSide().pawns;
             if (p.getClass().equals(Bishop.class))
@@ -268,6 +299,8 @@ public class Game
                 return p.getSide().knights;
             if (p.getClass().equals(Rook.class))
                 return p.getSide().rooks;
+            if (p.getClass().equals(Cannon.class))
+                return p.getSide().cannons;
             else
                 return p.getSide().queens;
         }
@@ -340,7 +373,7 @@ public class Game
             //p = (Pawn) move.sourceSquare.piece;
             //tmp = (Pawn)p;
             pawn1stMoveRank = ((Pawn) p).initRow;
-            pawn1stMoveRank = (gameStatus.sideToMove == White) ? (pawn1stMoveRank+1 +2) : (pawn1stMoveRank-1 -2);
+            pawn1stMoveRank = (gameStatus.sideToMove.isWhite) ? (pawn1stMoveRank+1 +2) : (pawn1stMoveRank-1 -2);
         }
         boolean bl_New_Result = gameStatus.enPassantActive
                 && move.sourceSquare.rank == pawn1stMoveRank
