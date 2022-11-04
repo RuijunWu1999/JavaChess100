@@ -62,9 +62,9 @@ public class Square
         this.file = file;
     }
 
-    public boolean isUnderAttackFrom(Side attackingSide, boolean pinMatters)
+    public boolean isUnderAttackFrom(Side attackingSide, Piece pShouldExcluded)
     {
-        boolean result = board.isUnderAttack(this, attackingSide, pinMatters);
+        boolean result = board.isUnderAttack(this, attackingSide, pShouldExcluded);
         /*
         if (result){
             JOptionPane.showMessageDialog(null,"This potential Move makes the King under attack!");
@@ -73,9 +73,9 @@ public class Square
         return result;
     }
     
-    public boolean isUnderAttackFromNonKingPieces(Side attackingSide, boolean pinMatters)
+    public boolean isUnderAttackFromNonKingPieces(Side attackingSide, Piece pShouldExcluded)
     {
-        return board.isUnderAttackFromNonKingPieces(this, attackingSide, pinMatters);
+        return board.isUnderAttackFromNonKingPieces(this, attackingSide, pShouldExcluded);
     }
 
     public int getPiecesEnRoute(Square sqTarget) {

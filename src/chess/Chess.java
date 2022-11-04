@@ -27,7 +27,7 @@ public class Chess
         final int[] layoutSelected = {0};
 
         final JFrame jf = new JFrame("Chess Board Select");
-        jf.setSize(280,400);
+        jf.setSize(380,400);
         jf.setLocationRelativeTo(null);
         jf.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -61,7 +61,15 @@ public class Chess
         btn4_XL_TR_8.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                layoutSelected[0] = Game.XL_PLUS_CANNON;
+                layoutSelected[0] = Game.XL_PLUS_CANNON_8D;
+            }
+        });
+
+        final JRadioButton btn5_XL_TR_4m8c = new JRadioButton("Enlarged Chess + Chinese Cannons(4Dmove, 8Dcapture)");
+        btn5_XL_TR_4m8c.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                layoutSelected[0] = Game.XL_PLUS_CANNON_4m8c;
             }
         });
 
@@ -80,6 +88,7 @@ public class Chess
         btnGrp.add(btn2_XL);
         btnGrp.add(btn3_XL_TR);
         btnGrp.add(btn4_XL_TR_8);
+        btnGrp.add(btn5_XL_TR_4m8c);
 
         btn3_XL_TR.setSelected(true);
         layoutSelected[0] = Game.XL_PLUS_CANNON;
@@ -88,6 +97,7 @@ public class Chess
         panel.add(btn2_XL);
         panel.add(btn3_XL_TR);
         panel.add(btn4_XL_TR_8);
+        panel.add(btn5_XL_TR_4m8c);
         panel.add(btn_START);
 
         jf.setContentPane(panel);

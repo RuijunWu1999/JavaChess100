@@ -27,6 +27,8 @@ public class Game
     final public static int STD_LAYOUT = 1;
     final public static int XL_LAYOUT = 10;
     final public static int XL_PLUS_CANNON = 20;
+    final public static int XL_PLUS_CANNON_4m8c = 24;
+    final public static int XL_PLUS_CANNON_8D = 28;
     public static final ImageIcon BATTLING_ICON = new ImageIcon("img/Battling.gif");
     // CONSTANTS
 
@@ -70,6 +72,20 @@ public class Game
                 White = new Side_XL_Cannons(true, this);
                 // 生成并配置白方棋子
                 Black = new Side_XL_Cannons(false, this);
+                // 生成并配置黑方棋子
+                break;
+            }
+            case Game.XL_PLUS_CANNON_8D: {
+                White = new Side_XL_Cannons_8D(true, this);
+                // 生成并配置白方棋子
+                Black = new Side_XL_Cannons_8D(false, this);
+                // 生成并配置黑方棋子
+                break;
+            }
+            case Game.XL_PLUS_CANNON_4m8c: {
+                White = new Side_XL_Cannons_4m8c(true, this);
+                // 生成并配置白方棋子
+                Black = new Side_XL_Cannons_4m8c(false, this);
                 // 生成并配置黑方棋子
                 break;
             }
@@ -290,7 +306,18 @@ public class Game
 
         private List<? extends Piece> getPieceList(Piece p)
         {
-            // already加入炮的LIST
+            // 需要加入每一种新增的子力
+            for (List lstKind : p.getSide().allKindsOfPieces)
+            {
+                Piece pp = (Piece)lstKind.get(0);
+                if ( pp.getClass().equals(p.getClass()) )
+                {
+                    return lstKind;
+                }
+            }
+
+            // The Following are not needed.
+            /*
             if (p.getClass().equals(Pawn.class))
                 return p.getSide().pawns;
             if (p.getClass().equals(Bishop.class))
@@ -299,10 +326,12 @@ public class Game
                 return p.getSide().knights;
             if (p.getClass().equals(Rook.class))
                 return p.getSide().rooks;
-            if (p.getClass().equals(Cannon.class))
+            if (p.getClass().equals(Cannon.class) || p.getClass().equals(Side_XL_Cannons_8D.Cannon_8D.class) )
                 return p.getSide().cannons;
             else
                 return p.getSide().queens;
+             */
+            return null;
         }
 
         public void showActiveSideINTurn(boolean blShow) {

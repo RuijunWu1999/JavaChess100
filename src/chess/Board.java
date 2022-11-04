@@ -31,6 +31,8 @@ public class Board extends JFrame
             case Game.STD_LAYOUT: totalRows = 8; break;
             case Game.XL_LAYOUT: totalRows = 10; break;
             case Game.XL_PLUS_CANNON: totalRows = 10; break;
+            case Game.XL_PLUS_CANNON_8D: totalRows = 10; break;
+            case Game.XL_PLUS_CANNON_4m8c: totalRows = 10; break;
             default: totalRows = 8;
         }
 
@@ -102,6 +104,8 @@ public class Board extends JFrame
             case Game.STD_LAYOUT: setSize(700, 700); break;
             case Game.XL_LAYOUT: setSize(820, 820); break;
             case Game.XL_PLUS_CANNON: setSize(820, 820); break;
+            case Game.XL_PLUS_CANNON_8D: setSize(820, 820); break;
+            case Game.XL_PLUS_CANNON_4m8c: setSize(820, 820); break;
             default: setSize(700, 700);
         }
 
@@ -176,14 +180,13 @@ public class Board extends JFrame
      *
      * @param square
      * @param attackingSide
-     * @param pinMatters
      * @return true if the square is under attack from the specified
      * attackingSide
      */
-    public boolean isUnderAttack(Square square, Side attackingSide, boolean pinMatters)
+    public boolean isUnderAttack(Square square, Side attackingSide, Piece pShouldExcluded)
     {
         // King is not in any list, need check it also.
-        return isUnderAttackFromNonKingPieces(square, attackingSide, pinMatters)
+        return isUnderAttackFromNonKingPieces(square, attackingSide, pShouldExcluded)
                 || isUnderAttackFromKing(square,attackingSide);
         //return false;
         //return isUnderAttackFromNonKingPieces(square, attackingSide, pinMatters)
@@ -191,14 +194,16 @@ public class Board extends JFrame
     }
 
 
-    public boolean isUnderAttackFromNonKingPieces(Square square, Side attackingSide, boolean pinMatters)
+    public boolean isUnderAttackFromNonKingPieces(Square square, Side attackingSide, Piece pShouldExcluded)
     {
         List<Piece> attackingPieces = getAttackingPieces(square, attackingSide);
+        attackingPieces.remove(pShouldExcluded);
+        // 去除将被吃掉的子的攻击力
         if (attackingPieces.size() > 0 ) return true;
         return false;
     }
 
-    private static List<Piece> getAttackingPieces(Square square, Side attackingSide) {
+    static List<Piece> getAttackingPieces(Square square, Side attackingSide) {
         List<Piece> attackingPieces = new ArrayList(6);
         for (List lstKinds: attackingSide.allKindsOfPieces ) {
             for (Object p : lstKinds) {
@@ -216,21 +221,28 @@ public class Board extends JFrame
 
     public boolean doesNotExposeKingToCheck(Move m)
     {
+        Piece pAttacking = m.sourceSquare.piece;
+        Piece pTarget = m.targetSquare.piece;
+        // adeel原本的实现是按格子找可能攻击的子，但还是需要保留模拟的棋子移动
         Piece temp = m.sourceSquare.piece;
         Piece temp2 = m.targetSquare.piece;
 
         // make the move
         m.sourceSquare.piece = null;
         m.targetSquare.piece = temp;
+        temp.square = m.targetSquare;
+        // 这样多了一个子？？？
 
+        // 改成各自的Piece内置method之后需要判断/排除正在被吃掉的子
         // check if it exposes king to check
-        boolean result = !temp.getSide().king.square.isUnderAttackFrom(temp.getSide().opponent, false);
+        boolean result = !pAttacking.getSide().king.square.isUnderAttackFrom(pAttacking.getSide().opponent, pTarget);
         if (!result) {
             JOptionPane.showMessageDialog(null,"The selected move makes The King underAttack!\n Canceled.");
         }
 
         // revert
         m.sourceSquare.piece = temp;
+        temp.square = m.sourceSquare;
         m.targetSquare.piece = temp2;
 
         return result;

@@ -247,14 +247,14 @@ public class Side
         }
     }
 
-    private static boolean isSameSquareRankANDFile(Square sqSrc, Square sqTarget) {
+    static boolean isSameSquareRankANDFile(Square sqSrc, Square sqTarget) {
         if (sqSrc.rank == sqTarget.rank && sqSrc.file == sqTarget.file) {
             return true;
         }
         return false;
     }
 
-    private static boolean directlyReachableOnRankOrFileTo(Square sqSrc, Square sqTarget) {
+    static boolean directlyReachableOnRankOrFileTo(Square sqSrc, Square sqTarget) {
         if (isOnSameRankOrFile(sqSrc, sqTarget))
         {
             int piecesEnRoute = sqSrc.getPiecesEnRoute(sqTarget);
@@ -266,7 +266,7 @@ public class Side
         return false;
     }
 
-    private static boolean isOnSameRankOrFile(Square sqSrc, Square sqTarget) {
+    static boolean isOnSameRankOrFile(Square sqSrc, Square sqTarget) {
         return (sqSrc.file == sqTarget.file && sqSrc.rank != sqTarget.rank)
                 || (sqSrc.rank == sqTarget.rank && sqSrc.file != sqTarget.file);
     }
@@ -325,7 +325,7 @@ public class Side
             // King's RULE.
             boolean result = ( canReachTo(move.targetSquare)
                     && (move.targetSquare.piece == null || isCapturablePiece(move.targetSquare.piece))
-                    && !move.targetSquare.isUnderAttackFrom(opponent, false))
+                    && !move.targetSquare.isUnderAttackFrom(opponent, move.targetSquare.piece))
                     || isLegalCastling(move.targetSquare);
             if (!result) {
                 JOptionPane.showMessageDialog(null,"This King's Move is Either ILLEGAL OR Exposed to Attacker!");
@@ -367,8 +367,8 @@ public class Side
                         if (rooks.get(1).notMoved)
                         // 1 stand for file located at rightmost
                         {
-                            boolean bl1 = !(board.get(square.rank, (fileLocofKing + 1)).isUnderAttackFrom(opponent, false));
-                            boolean bl2 = !(board.get(square.rank, (fileLocofKing + 2)).isUnderAttackFrom(opponent, false));
+                            boolean bl1 = isLegalCastlingOnPathCannonExcluded(board.get(square.rank, (fileLocofKing + 1)), opponent);
+                            boolean bl2 = isLegalCastlingOnPathCannonExcluded(board.get(square.rank, (fileLocofKing + 2)), opponent);
                             castlingInProgress = bl1 && bl2;
                             return castlingInProgress;
                         }
@@ -378,8 +378,11 @@ public class Side
                         if (rooks.get(0).notMoved)
                         // 0 stand for file located at leftmost
                         {
-                            boolean bl1 = !(board.get(square.rank, (fileLocofKing - 1)).isUnderAttackFrom(opponent, false));
-                            boolean bl2 = !(board.get(square.rank, (fileLocofKing - 2)).isUnderAttackFrom(opponent, false));
+                            // boolean bl1 = !(board.get(square.rank, (fileLocofKing - 1)).isUnderAttackFrom(opponent, sqTarget.piece));
+                            // boolean bl2 = !(board.get(square.rank, (fileLocofKing - 2)).isUnderAttackFrom(opponent, sqTarget.piece));
+
+                            boolean bl1 = isLegalCastlingOnPathCannonExcluded(board.get(square.rank, (fileLocofKing - 1)), opponent);
+                            boolean bl2 = isLegalCastlingOnPathCannonExcluded(board.get(square.rank, (fileLocofKing - 2)), opponent);
                             castlingInProgress = bl1 && bl2;
                             return castlingInProgress;
                         }
@@ -388,6 +391,20 @@ public class Side
             }
             return false;
         }
+
+        private boolean isLegalCastlingOnPathCannonExcluded(Square inputSquare, Side opponent) {
+            List<Piece> list1 = board.getAttackingPieces(inputSquare, opponent);
+            List<Piece> list2 = new ArrayList<>();
+            for (Piece currAttacker : list1){
+                if (!(currAttacker.getClass().equals(Cannon.class)
+                        || currAttacker.getClass().equals(Side_XL_Cannons_8D.Cannon_8D.class)
+                        || currAttacker.getClass().equals(Side_XL_Cannons_4m8c.Cannon_4m8c.class))) {
+                    list2.add(currAttacker);
+                }
+            }
+            return (list2.size() == 0);
+        }
+
 
         private boolean isLegalCastlingWithMove(Move move)
         {
@@ -406,8 +423,8 @@ public class Side
                         if (rooks.get(1).notMoved)
                         // 1 stand for file located at rightmost
                         {
-                            boolean bl1 = !(board.get(square.rank, (fileLocofKing + 1)).isUnderAttackFrom(opponent, false));
-                            boolean bl2 = !(board.get(square.rank, (fileLocofKing + 2)).isUnderAttackFrom(opponent, false));
+                            boolean bl1 = !(board.get(square.rank, (fileLocofKing + 1)).isUnderAttackFrom(opponent, move.targetSquare.piece));
+                            boolean bl2 = !(board.get(square.rank, (fileLocofKing + 2)).isUnderAttackFrom(opponent, move.targetSquare.piece));
                             castlingInProgress = bl1 && bl2;
 
                             return castlingInProgress;
@@ -418,8 +435,8 @@ public class Side
                         if (rooks.get(0).notMoved)
                         // 0 stand for file located at leftmost
                         {
-                            castlingInProgress = !(board.get(square.rank, (fileLocofKing-1)).isUnderAttackFrom(opponent, false))
-                                    && !(board.get(square.rank, (fileLocofKing-2)).isUnderAttackFrom(opponent, false));
+                            castlingInProgress = !(board.get(square.rank, (fileLocofKing-1)).isUnderAttackFrom(opponent, move.targetSquare.piece))
+                                    && !(board.get(square.rank, (fileLocofKing-2)).isUnderAttackFrom(opponent, move.targetSquare.piece));
                             return castlingInProgress;
                         }
                     }
@@ -478,7 +495,7 @@ public class Side
                         if (sq.piece == null || isCapturablePiece(sq.piece))
                         // 无子 或 可被KING吃掉
                         {
-                            if (!sq.isUnderAttackFrom(opponent, false))
+                            if (!sq.isUnderAttackFrom(opponent, sq.piece))
                             // 新的格子上是否被攻击,只要有一个不被攻击即可
                             {
                                 return false;
@@ -511,7 +528,7 @@ public class Side
                             || Math.abs(checkingPiecesList.get(0).square.file - f) >= 1)
                     {
                         Square sq0 = board.get(r, f);
-                        if (sq0.isUnderAttackFromNonKingPieces(self, true) )
+                        if (sq0.isUnderAttackFromNonKingPieces(self, sq0.piece) )
 //                            || board.isReachableByCannons(sq0, self.opponent,true))
                         {
                             // 是这一条线上可以走过来阻隔的位置的概念！
@@ -530,7 +547,7 @@ public class Side
             boolean result = (checkingPiecesList.size() == 1);
             //result = result && checkingPiecesList.get(0).square.isUnderAttackFrom(opponent, true);
             // Above is meaningless ???
-            result = result && !checkingPiecesList.get(0).square.isUnderAttackFrom(self, true);
+            result = result && !checkingPiecesList.get(0).square.isUnderAttackFrom(self, null);
             // SHOULD NOT it to make it NotCapturable, underAttack == Capturable
             return result;
         }
