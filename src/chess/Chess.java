@@ -49,7 +49,7 @@ public class Chess
             }
         });
 
-        final JRadioButton btn3_XL_TR = new JRadioButton("Enlarged Chess + Chinese Cannons(4 directions)");
+        final JRadioButton btn3_XL_TR = new JRadioButton("Enlarged Chess + Cannons (4 directions)");
         btn3_XL_TR.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -57,7 +57,7 @@ public class Chess
             }
         });
 
-        final JRadioButton btn4_XL_TR_8 = new JRadioButton("Enlarged Chess + Chinese Cannons(8 directions)");
+        final JRadioButton btn4_XL_TR_8 = new JRadioButton("Enlarged Chess + Cannons (8 directions)");
         btn4_XL_TR_8.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -65,7 +65,7 @@ public class Chess
             }
         });
 
-        final JRadioButton btn5_XL_TR_4m8c = new JRadioButton("Enlarged Chess + Chinese Cannons(4Dmove, 8Dcapture)");
+        final JRadioButton btn5_XL_TR_4m8c = new JRadioButton("Enlarged Chess + Cannons (4Dmove, 8Dcapture)");
         btn5_XL_TR_4m8c.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

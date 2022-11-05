@@ -872,7 +872,7 @@ public class Side
         private char swingJFramePromotionChoosser() {
             char pieceSelected = 'q';
 
-            String str = JOptionPane.showInputDialog(null, "Promote to (q, r, b, n): ");
+            String str = JOptionPane.showInputDialog(null, "Promote to (q, r, b, n, c): ");
             if (!str.isEmpty()) {
                 char aa = str.charAt(0);
                 switch (aa){
