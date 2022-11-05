@@ -309,11 +309,16 @@ public class Game
             // 需要加入每一种新增的子力
             for (List lstKind : p.getSide().allKindsOfPieces)
             {
-                Piece pp = (Piece)lstKind.get(0);
-                if ( pp.getClass().equals(p.getClass()) )
+            // 2022-11-05
+                if (lstKind.size() > 0)
                 {
-                    return lstKind;
+                    Piece pp = (Piece)lstKind.get(0);
+                    if ( pp.getClass().equals(p.getClass()) )
+                    {
+                        return lstKind;
+                    }
                 }
+            // 2022-11-05
             }
 
             // The Following are not needed.
