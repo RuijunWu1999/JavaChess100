@@ -368,7 +368,8 @@ public class Side
                         // 1 stand for file located at rightmost
                         {
                             boolean bl1 = isLegalCastlingOnPathCannonExcluded(board.get(square.rank, (fileLocofKing + 1)), opponent);
-                            boolean bl2 = isLegalCastlingOnPathCannonExcluded(board.get(square.rank, (fileLocofKing + 2)), opponent);
+                            // boolean bl2 = isLegalCastlingOnPathCannonExcluded(board.get(square.rank, (fileLocofKing + 2)), opponent);
+                            boolean bl2 = !(board.get(square.rank, (fileLocofKing + 2)).isUnderAttackFrom(opponent, null));
                             castlingInProgress = bl1 && bl2;
                             return castlingInProgress;
                         }
@@ -382,7 +383,8 @@ public class Side
                             // boolean bl2 = !(board.get(square.rank, (fileLocofKing - 2)).isUnderAttackFrom(opponent, sqTarget.piece));
 
                             boolean bl1 = isLegalCastlingOnPathCannonExcluded(board.get(square.rank, (fileLocofKing - 1)), opponent);
-                            boolean bl2 = isLegalCastlingOnPathCannonExcluded(board.get(square.rank, (fileLocofKing - 2)), opponent);
+                            // boolean bl2 = isLegalCastlingOnPathCannonExcluded(board.get(square.rank, (fileLocofKing - 2)), opponent);
+                            boolean bl2 = !(board.get(square.rank, (fileLocofKing - 2)).isUnderAttackFrom(opponent, null));
                             castlingInProgress = bl1 && bl2;
                             return castlingInProgress;
                         }
