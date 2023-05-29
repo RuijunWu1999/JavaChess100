@@ -18,9 +18,8 @@ public class Side_XL_Cannons_8D extends Side_XL{
         king = new King(((isWhite) ? 0 : (totalRows -1)), 5);
         queens.add(new Queen(((isWhite) ? 0 : (totalRows -1)), 4));
 
-        rooks.add(new Rook(((isWhite) ? 0 : (totalRows -1)), 0));
-        rooks.add(new Rook(((isWhite) ? 0 : (totalRows -1)), 9));
-        // rooks on end position
+        rooks.add(new Rook(((isWhite) ? 0 : (totalRows -1)), 1));
+        rooks.add(new Rook(((isWhite) ? 0 : (totalRows -1)), 8));
 
         knights.add(new Knight(((isWhite) ? 0 : (totalRows -1)), 2));
         knights.add(new Knight(((isWhite) ? 0 : (totalRows -1)), 7));
@@ -28,9 +27,9 @@ public class Side_XL_Cannons_8D extends Side_XL{
         bishops.add(new Bishop(((isWhite) ? 0 : (totalRows -1)), 3));
         bishops.add(new Bishop(((isWhite) ? 0 : (totalRows -1)), 6));
 
-        cannons.add(new Cannon_8D(((isWhite) ? 0 : (totalRows -1)), 1));
-        cannons.add(new Cannon_8D(((isWhite) ? 0 : (totalRows -1)), 8));
-        //ChineseTrebuchet
+        cannons.add(new Cannon_8D(((isWhite) ? 0 : (totalRows -1)), 0));
+        cannons.add(new Cannon_8D(((isWhite) ? 0 : (totalRows -1)), 9));
+        //ChineseTrebuchet on end position
         setupPawns();
     }
 
